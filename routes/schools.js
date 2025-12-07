@@ -3,6 +3,11 @@ var router = express.Router();
 const School = require('../models/school');
 const Uuid = require('uuid');
 
+/* GET form to create new school */
+router.get('/new', function(req, res, next) {
+  res.render('create-school');
+});
+
 /* GET all schools */
 router.get('/', async function(req, res, next) {
   try {
