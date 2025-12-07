@@ -15,6 +15,8 @@ async function run() {
     // Connect to MongoDB using Mongoose!
     await mongoose.connect(uri);
     console.log("Successfully connected to MongoDB!");
+    // clear database on each run for testing purposes
+    await mongoose.connection.db.dropDatabase();
   } catch (error) {
     console.error("MongoDB connection error:", error);
     throw error;

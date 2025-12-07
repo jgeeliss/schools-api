@@ -9,6 +9,13 @@ block content
             input(type='text' name='name', required)
 
         div
+            label(for='type' style='display: inline-block; width: 120px;') Type:
+            select(name='type' required)
+                option(value='school') School
+                option(value='board') Board
+                option(value='umbrella') Umbrella
+
+        div
             label(for='email' style='display: inline-block; width: 120px;') E-mail:
             input(type='email' name='email', required)
 
