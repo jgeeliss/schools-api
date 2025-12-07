@@ -1,0 +1,9 @@
+{
+    "databaseCredentials": {
+        "host": "clusterx.abcdef.mongodb.net",
+        "clusterName": "Clusterx",
+        "user": "userx_db_user",
+        "password": "password",
+        "port": 5432
+    }
+}
