@@ -4,13 +4,16 @@ block content
     h1 Maak een nieuwe school aan
 
     form(method='POST' action='/schools')
-        label(for='name') School naam:
-        input(type='text' name='name', required)
+        div
+            label(for='name' style='display: inline-block; width: 120px;') School naam:
+            input(type='text' name='name', required)
 
-        label(for='email') E-mail:
-        input(type='email' name='email', required)
+        div
+            label(for='email' style='display: inline-block; width: 120px;') E-mail:
+            input(type='email' name='email', required)
 
-        label(for='telephone') Telefoon:
-        input(type='tel' name='telephone', required)
+        div
+            label(for='telephone' style='display: inline-block; width: 120px;') Telefoon:
+            input(type='tel' name='telephone', required)
 
         button(type='submit') Maak School aan
