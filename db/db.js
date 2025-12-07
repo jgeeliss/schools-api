@@ -1,5 +1,4 @@
-// source: code taken from the MongoDB Atlas Node.js Quick Start
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,26 +10,15 @@ const { user, password, host, clusterName } = config.databaseCredentials;
 // MongoDB connection URI
 const uri = `mongodb+srv://${user}:${password}@${host}/?appName=${clusterName}`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    // Connect to MongoDB using Mongoose!
+    await mongoose.connect(uri);
+    console.log("Successfully connected to MongoDB!");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
 }
 
-module.exports = { run, client };
+module.exports = { run };
