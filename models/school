@@ -1,12 +1,6 @@
 const mongoose = require('mongoose');
 
 const schoolSchema = new mongoose.Schema({
-    permalink: {
-        type: String,
-        required: [true, 'Permalink is required'],
-        unique: true,
-        trim: true
-    },
     name: {
         type: String,
         required: [true, 'Name is required'],
@@ -18,8 +12,8 @@ const schoolSchema = new mongoose.Schema({
         required: [true, 'Type is required']
     },
     belongsTo: {
-        type: mongoose.Schema.Types.ObjectId,
-        // note: this field will store the _id of a document from another School:
+        type: String,
+        // note: this field will store the permalink of a document from another School:
         ref: 'School',
         default: null
     },

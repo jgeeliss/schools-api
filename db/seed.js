@@ -65,7 +65,7 @@ async function seed() {
         // Create umbrellas first
         const createdUmbrellas = [];
         for (const umbrella of umbrellas) {
-            umbrella.permalink = Uuid.v4();
+            umbrella._id = Uuid.v4();
             const created = await School.create(umbrella);
             createdUmbrellas.push(created);
             console.log(`Created umbrella: ${created.name}`);
@@ -73,9 +73,9 @@ async function seed() {
 
         // Assign each board to a random umbrella
         for (const board of boards) {
-            board.permalink = Uuid.v4();
+            board._id = Uuid.v4();
             const randomUmbrella = createdUmbrellas[Math.floor(Math.random() * createdUmbrellas.length)];
-            board.belongsTo = randomUmbrella._id;
+            board.belongsTo = randomUmbrella.permalink;
             const created = await School.create(board);
             console.log(`Created board: ${created.name}${created.belongsTo ? ' (with umbrella)' : ''}`);
         }
