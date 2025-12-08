@@ -17,6 +17,12 @@ const schoolSchema = new mongoose.Schema({
         enum: ['school', 'board', 'umbrella'],
         required: [true, 'Type is required']
     },
+    belongsTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        // note: this field will store the _id of a document from another School:
+        ref: 'School',
+        default: null
+    },
     email: {
         type: String,
         required: [true, 'Email is required'],
