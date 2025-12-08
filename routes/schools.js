@@ -23,6 +23,12 @@ router.get('/', async function(req, res, next) {
   try {
     const query = {};
 
+    // only allow 'type' as query parameter
+    const queryKeys = Object.keys(req.query);
+    if (queryKeys.length > 0 && (queryKeys.length > 1 || queryKeys[0] !== 'type')) {
+      return res.status(400).json({ message: 'Invalid query parameters. Only "type" is allowed.' });
+    }
+
     // note: filter by type if provided in query string
     if (req.query.type) {
       query.type = req.query.type;
