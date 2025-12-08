@@ -21,7 +21,14 @@ router.get('/new', async function(req, res, next) {
 /* GET all schools */
 router.get('/', async function(req, res, next) {
   try {
-    const schools = await School.find({});
+    const query = {};
+
+    // note: filter by type if provided in query string
+    if (req.query.type) {
+      query.type = req.query.type;
+    }
+
+    const schools = await School.find(query);
     res.json(schools);
   } catch (error) {
     next(error);
