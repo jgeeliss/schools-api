@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const schoolSchema = new mongoose.Schema({
+    _id: {
+        // _id needs to be a String to store UUIDs
+        type: String
+    },
     name: {
         type: String,
         required: [true, 'Name is required'],
