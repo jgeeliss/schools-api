@@ -4,8 +4,18 @@ const School = require('../models/school');
 const Uuid = require('uuid');
 
 /* GET form to create new school */
-router.get('/new', function(req, res, next) {
-  res.render('create-school');
+router.get('/new', async function(req, res, next) {
+  try {
+    // note: $in operator to filter by multiple types
+    // source: https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015
+    // note: we fetch both boards and umbrellas as possible parents and pass them to the view
+    const schools = await School.find({ type: { $in: ['board', 'umbrella'] } });
+    res.render('create-school', {
+      schools: schools
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 /* GET all schools */
