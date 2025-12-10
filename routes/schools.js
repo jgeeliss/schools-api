@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const School = require('../models/school');
+const Course = require('../models/course');
 const Uuid = require('uuid');
 
 /* GET form to create new school */
@@ -58,6 +59,7 @@ router.get('/:uuid', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
   try {
     req.body._id = Uuid.v4();
+    //TODO: validate that 'belongsTo' can only be of relation school -> board -> umbrella (both here and in form probably)
     const school = await School.create(req.body);
     res.status(201).json(school);
   } catch (error) {
@@ -68,10 +70,34 @@ router.post('/', async function(req, res, next) {
 /* DELETE school by UUID (permalink) */
 router.delete('/:uuid', async function(req, res, next) {
   try {
-    const school = await School.findByIdAndDelete(req.params.uuid);
+    const school = await School.findById(req.params.uuid);
     if (!school) {
       return res.status(404).json({ message: 'School not found' });
     }
+
+    // Check if any schools belong to this school
+    const childSchools = await School.countDocuments({ belongsTo: req.params.uuid });
+    if (childSchools > 0) {
+      return res.status(400).json({
+        message: 'Cannot delete school with child schools. Please delete or reassign child schools first.',
+        // TODO: need to be add an update route for schools!
+        // inform how many child schools exist:
+        numberOfChildSchools: childSchools
+      });
+    }
+
+    // Check if any courses belong to this school
+    const coursesCount = await Course.countDocuments({ school: req.params.uuid });
+    if (coursesCount > 0) {
+      return res.status(400).json({
+        message: 'Cannot delete school with courses. Please delete or reassign courses first.',
+        // TODO: need to be add an update route for courses too!
+        numberOfCourses: coursesCount
+      });
+    }
+
+    // no children or courses, delete the school
+    await School.findByIdAndDelete(req.params.uuid);
     res.json({ message: 'School deleted successfully', school: school });
   } catch (error) {
     next(error);
