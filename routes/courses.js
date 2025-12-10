@@ -66,4 +66,17 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+/* DELETE course by UUID (permalink) */
+router.delete('/:uuid', async function(req, res, next) {
+  try {
+    const course = await Course.findByIdAndDelete(req.params.uuid);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    res.json({ message: 'Course deleted successfully', course: course });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

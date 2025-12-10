@@ -69,3 +69,8 @@ curl http://localhost:3000/courses?year={year}
 ```bash
 curl http://localhost:3000/courses/{course_id}
 ```
+
+### delete a course by ID
+```bash
+curl -X DELETE http://localhost:3000/courses/{course_id}
+```
