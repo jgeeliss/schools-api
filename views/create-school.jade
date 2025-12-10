@@ -10,17 +10,15 @@ block content
 
         div
             label(for='type' style='display: inline-block; width: 120px;') Type:
-            select(name='type' required)
+            select#schoolType(name='type' required)
                 option(value='school') School
                 option(value='board') Board
                 option(value='umbrella') Umbrella
 
-        div#belongsToInput
+        div#belongsToInput(style='display: none;')
             label(for='belongsTo' style='display: inline-block; width: 120px;') Schoolbestuur:
             select(name='belongsTo')
-                option(value='' style='font-family: monospace;') Geen parent
-                each school in schools
-                    option(value=school._id style='font-family: monospace;')= school._id + ' - ' + school.name
+                option(value='') Geen parent
 
         div
             label(for='email' style='display: inline-block; width: 120px;') E-mail:
@@ -32,12 +30,45 @@ block content
 
         button(type='submit') Maak School aan
 
-        script.
-            document.querySelector('select[name="type"]').addEventListener('change', function(e) {
-                const belongsToInput = document.getElementById('belongsToInput');
-                if (e.target.value === 'umbrella') {
-                    belongsToInput.style.display = 'none';
-                } else {
-                    belongsToInput.style.display = 'block';
-                }
+    script.
+        // Pass schools data from server to JavaScript
+        // note: !{JSON.stringify(xxx)} is Jade unescaped interpolation syntax to convert a JavaScript object into a JSON string
+        // source: https://stackoverflow.com/questions/8698534/how-to-pass-variable-from-jade-template-file-to-a-script-file
+        const allBoardsAndUmbrellas = !{JSON.stringify(schools)};
+
+        const schoolTypeSelect = document.getElementById('schoolType');
+        const belongsToInput = document.getElementById('belongsToInput');
+        const belongsToSelect = belongsToInput.querySelector('select');
+
+        schoolTypeSelect.addEventListener('change', function(e) {
+            const selectedType = e.target.value;
+
+            // Hide belongsTo input for umbrellas and return
+            if (selectedType === 'umbrella') {
+                belongsToInput.style.display = 'none';
+                return;
+            }
+
+            // Do show belongsTo input for schools and boards
+            belongsToInput.style.display = 'block';
+
+            // Determine which parent type to show
+            const parentType = selectedType === 'school' ? 'board' : 'umbrella';
+
+            // Filter schools by parent type
+            const filteredBoardsAndUmbrellas = allBoardsAndUmbrellas.filter(school => school.type === parentType);
+
+            // Populate the dropdown
+            // reset options by setting innerHTML otherwise the list keeps growing on each change!
+            belongsToSelect.innerHTML = '<option value="">Geen parent</option>';
+            // create an option element for each filtered school
+            filteredBoardsAndUmbrellas.forEach(parent => {
+                const option = document.createElement('option');
+                option.value = parent._id;
+                option.textContent = parent.name;
+                belongsToSelect.appendChild(option);
             });
+        });
+
+        // also run this on page load otherwise the belongsTo select won't be populated until the user changes the type!
+        schoolTypeSelect.dispatchEvent(new Event('change'));
