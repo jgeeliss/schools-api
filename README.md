@@ -50,6 +50,11 @@ curl http://localhost:3000/schools?type=board
 curl http://localhost:3000/schools/{school_id}
 ```
 
+### delete a school by ID
+```bash
+curl -X DELETE http://localhost:3000/schools/{school_id}
+```
+
 ### get all courses
 ```bash
 curl http://localhost:3000/courses

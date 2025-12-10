@@ -65,4 +65,17 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+/* DELETE school by UUID (permalink) */
+router.delete('/:uuid', async function(req, res, next) {
+  try {
+    const school = await School.findByIdAndDelete(req.params.uuid);
+    if (!school) {
+      return res.status(404).json({ message: 'School not found' });
+    }
+    res.json({ message: 'School deleted successfully', school: school });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
