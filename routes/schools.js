@@ -106,7 +106,11 @@ router.put('/:uuid', async function(req, res, next) {
     if (!school) {
       return res.status(404).json({ message: 'School not found' });
     }
-    // TODO: validate 'belongsTo' hierarchy as in POST route
+    // validate 'belongsTo' hierarchy. If 'type' is not provided in the update, use the existing school's type
+    const parentTypeError = await checkIfParentIsOfValidType(req.body.type || school.type, req.body.belongsTo);
+    if (parentTypeError) {
+      return res.status(400).json(parentTypeError);
+    }
 
     // Update the school
     const updatedSchool = await School.findByIdAndUpdate(

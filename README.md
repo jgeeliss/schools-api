@@ -28,7 +28,8 @@ curl -X PUT http://localhost:3000/schools/{school_id} \
 -H "Content-Type: application/json" \
 -d '{
   "name": "Bijgewerkte School Naam",
-  "email": "updated@example.com"
+  "email": "updated@example.com",
+  "belongsTo": "new-board-or-umbrella-uuid"
 }'
 ```
 
