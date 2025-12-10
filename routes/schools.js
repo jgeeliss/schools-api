@@ -59,7 +59,24 @@ router.get('/:uuid', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
   try {
     req.body._id = Uuid.v4();
-    //TODO: validate that 'belongsTo' can only be of relation school -> board -> umbrella (both here and in form probably)
+
+    // Validate that 'belongsTo' follows the hierarchy: school -> board -> umbrella
+    if (req.body.belongsTo) {
+      const parentSchool = await School.findById(req.body.belongsTo);
+
+      if (req.body.type === 'school' && parentSchool.type !== 'board') {
+        return res.status(400).json({ message: 'A school can only belong to a board' });
+      }
+
+      if (req.body.type === 'board' && parentSchool.type !== 'umbrella') {
+        return res.status(400).json({ message: 'A board can only belong to an umbrella' });
+      }
+
+      if (req.body.type === 'umbrella') {
+        return res.status(400).json({ message: 'An umbrella cannot belong to something else' });
+      }
+    }
+
     const school = await School.create(req.body);
     res.status(201).json(school);
   } catch (error) {

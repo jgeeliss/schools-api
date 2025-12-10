@@ -16,7 +16,8 @@ curl -X POST http://localhost:3000/schools \
   "name": "Voorbeeld School",
   "type": "school",
   "email": "info@voorbeeld.be",
-  "telephone": "+32 123456789"
+  "telephone": "+32 123456789",
+  "belongsTo": "some-board-or-umbrella-uuid"
 }'
 ```
 
@@ -33,7 +34,7 @@ curl -X POST http://localhost:3000/courses \
 }'
 ```
 
-Users can also create a school or a course by using the web forms at `http://localhost:3000/schools/new` and `http://localhost:3000/courses/new`.
+Users can also create a school or a course by using the web forms at `http://localhost:3000/schools/new` and `http://localhost:3000/courses/new`. (Which makes it easier to add the "belongsTo" and "school" relationships.)
 
 ### get all schools
 ```bash
