@@ -8,6 +8,7 @@ A simple RESTful API for managing schools, school boards, and umbrella organizat
 - Validation and error handling
 - UUIDs for unique identification of schools and courses
 
+## Schools
 ### create a school
 ```bash
 curl -X POST http://localhost:3000/schools \
@@ -21,20 +22,15 @@ curl -X POST http://localhost:3000/schools \
 }'
 ```
 
-### create a course
+### update a school
 ```bash
-curl -X POST http://localhost:3000/courses \
+curl -X PUT http://localhost:3000/schools/{school_id} \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "Voorbeeld Cursus",
-  "subject": "Wiskunde",
-  "year": 1,
-  "teacher": "Jan Jansen",
-  "school": "some-school-uuid"
+  "name": "Bijgewerkte School Naam",
+  "email": "updated@example.com"
 }'
 ```
-
-Users can also create a school or a course by using the web forms at `http://localhost:3000/schools/new` and `http://localhost:3000/courses/new`. (Which makes it easier to add the "belongsTo" and "school" relationships.)
 
 ### get all schools
 ```bash
@@ -60,6 +56,23 @@ curl -X DELETE http://localhost:3000/schools/{school_id}
 ```bash
 curl http://localhost:3000/courses
 ```
+
+## Courses
+
+### create a course
+```bash
+curl -X POST http://localhost:3000/courses \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Voorbeeld Cursus",
+  "subject": "Wiskunde",
+  "year": 1,
+  "teacher": "Jan Jansen",
+  "school": "some-school-uuid"
+}'
+```
+
+Users can also create a school or a course by using the web forms at `http://localhost:3000/schools/new` and `http://localhost:3000/courses/new`. (Which makes it easier to add the "belongsTo" and "school" relationships.)
 
 ### get courses by year
 ```bash

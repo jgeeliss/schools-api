@@ -84,6 +84,33 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+/* PUT update school by UUID (permalink) */
+router.put('/:uuid', async function(req, res, next) {
+  try {
+    // Don't allow updating _id
+    if (req.body._id) {
+      return res.status(400).json({ message: 'Cannot change school ID' });
+    }
+
+    const school = await School.findById(req.params.uuid);
+    if (!school) {
+      return res.status(404).json({ message: 'School not found' });
+    }
+    // TODO: validate 'belongsTo' hierarchy as in POST route
+
+    // Update the school
+    const updatedSchool = await School.findByIdAndUpdate(
+      req.params.uuid,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    res.json(updatedSchool);
+  } catch (error) {
+    next(error);
+  }
+});
+
 /* DELETE school by UUID (permalink) */
 router.delete('/:uuid', async function(req, res, next) {
   try {
