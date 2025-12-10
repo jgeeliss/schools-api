@@ -55,26 +55,36 @@ router.get('/:uuid', async function(req, res, next) {
   }
 });
 
+async function checkIfParentIsOfValidType(schoolType, belongsToId) {
+    if (belongsToId) {
+      const parentSchool = await School.findById(belongsToId);
+      if (!parentSchool) {
+        return { message: 'Parent school not found' };
+      }
+
+      if (schoolType === 'school' && parentSchool.type !== 'board') {
+        return { message: 'A school can only belong to a board' };
+      }
+
+      if (schoolType === 'board' && parentSchool.type !== 'umbrella') {
+        return { message: 'A board can only belong to an umbrella' };
+      }
+
+      if (schoolType === 'umbrella') {
+        return { message: 'An umbrella cannot belong to something else' };
+      }
+    }
+}
+
 /* POST create new school */
 router.post('/', async function(req, res, next) {
   try {
     req.body._id = Uuid.v4();
 
     // Validate that 'belongsTo' follows the hierarchy: school -> board -> umbrella
-    if (req.body.belongsTo) {
-      const parentSchool = await School.findById(req.body.belongsTo);
-
-      if (req.body.type === 'school' && parentSchool.type !== 'board') {
-        return res.status(400).json({ message: 'A school can only belong to a board' });
-      }
-
-      if (req.body.type === 'board' && parentSchool.type !== 'umbrella') {
-        return res.status(400).json({ message: 'A board can only belong to an umbrella' });
-      }
-
-      if (req.body.type === 'umbrella') {
-        return res.status(400).json({ message: 'An umbrella cannot belong to something else' });
-      }
+    const parentTypeError = await checkIfParentIsOfValidType(req.body.type, req.body.belongsTo);
+    if (parentTypeError) {
+      return res.status(400).json(parentTypeError);
     }
 
     const school = await School.create(req.body);
