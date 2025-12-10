@@ -15,7 +15,7 @@ block content
                 option(value='board') Board
                 option(value='umbrella') Umbrella
 
-        div
+        div#belongsToInput
             label(for='belongsTo' style='display: inline-block; width: 120px;') Schoolbestuur:
             select(name='belongsTo')
                 option(value='' style='font-family: monospace;') Geen parent
@@ -31,3 +31,13 @@ block content
             input(type='tel' name='telephone', required)
 
         button(type='submit') Maak School aan
+
+        script.
+            document.querySelector('select[name="type"]').addEventListener('change', function(e) {
+                const belongsToInput = document.getElementById('belongsToInput');
+                if (e.target.value === 'umbrella') {
+                    belongsToInput.style.display = 'none';
+                } else {
+                    belongsToInput.style.display = 'block';
+                }
+            });
