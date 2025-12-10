@@ -1,0 +1,35 @@
+extends layout
+
+block content
+    h1 Maak een nieuwe cursus aan
+
+    form(method='POST' action='/courses')
+        div
+            label(for='name' style='display: inline-block; width: 120px;') Cursus naam:
+            input(type='text' name='name', required)
+
+        div
+            label(for='year' style='display: inline-block; width: 120px;') Jaar:
+            select(name='year' required)
+                option(value='1') 1ste leerjaar
+                option(value='2') 2de leerjaar
+                option(value='3') 3de leerjaar
+                option(value='4') 4de leerjaar
+                option(value='5') 5de leerjaar
+                option(value='6') 6de leerjaar
+        div
+            label(for='belongsTo' style='display: inline-block; width: 120px;') School:
+            select(name='belongsTo')
+                option(value='' style='font-family: monospace;') Geen school
+                each school in schools
+                    option(value=school._id style='font-family: monospace;')= school._id + ' - ' + school.name
+
+        div
+            label(for='subject' style='display: inline-block; width: 120px;') Onderwerp:
+            input(type='text' name='subject', required)
+
+        div
+            label(for='teacher' style='display: inline-block; width: 120px;') Leerkracht:
+            input(type='text' name='teacher', required)
+
+        button(type='submit') Maak Cursus aan

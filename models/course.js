@@ -15,12 +15,16 @@ const courseSchema = new mongoose.Schema({
         required: [true, 'Subject is required'],
         trim: true
     },
+    year: {
+        type: Number,
+        required: [true, 'Year is required'],
+    },
     teacher: {
         type: String,
         required: [true, 'Teacher is required'],
         trim: true
     },
-    belongsTo: {
+    school: {
         type: String,
         // note: this field will store the permalink of a document from a School:
         ref: 'School',
