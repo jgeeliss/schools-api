@@ -66,6 +66,8 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+// TODO: Add PUT route to update course
+
 /* DELETE course by UUID (permalink) */
 router.delete('/:uuid', async function(req, res, next) {
   try {
