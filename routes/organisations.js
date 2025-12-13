@@ -4,14 +4,14 @@ const Organisation = require('../models/organisation');
 const Course = require('../models/course');
 const Uuid = require('uuid');
 
-/* GET form to create new school */
+/* GET form to create new organisation */
 router.get('/new', async function(req, res, next) {
   try {
     // note: $in operator to filter by multiple types
     // source: https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015
     // note: we fetch both boards and umbrellas as possible parents and pass them to the view
     const organisations = await Organisation.find({ type: { $in: ['board', 'umbrella'] } });
-    res.render('create-school', {
+    res.render('create-organisation', {
       organisations: organisations
     });
   } catch (error) {
@@ -42,41 +42,41 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-/* GET school by UUID (permalink) */
+/* GET organisation by UUID (permalink) */
 router.get('/:uuid', async function(req, res, next) {
   try {
-    const school = await Organisation.findById(req.params.uuid);
-    if (!school) {
-      return res.status(404).json({ message: 'School not found' });
+    const organisation = await Organisation.findById(req.params.uuid);
+    if (!organisation) {
+      return res.status(404).json({ message: 'Organisation not found' });
     }
-    res.json(school);
+    res.json(organisation);
   } catch (error) {
     next(error);
   }
 });
 
-async function checkIfParentIsOfValidType(schoolType, belongsToId) {
+async function checkIfParentIsOfValidType(organisationType, belongsToId) {
     if (belongsToId) {
-      const parentSchool = await Organisation.findById(belongsToId);
-      if (!parentSchool) {
-        return { message: 'Parent school not found' };
+      const parentOrganisation = await Organisation.findById(belongsToId);
+      if (!parentOrganisation) {
+        return { message: 'Parent organisation not found' };
       }
 
-      if (schoolType === 'school' && parentSchool.type !== 'board') {
+      if (organisationType === 'school' && parentOrganisation.type !== 'board') {
         return { message: 'A school can only belong to a board' };
       }
 
-      if (schoolType === 'board' && parentSchool.type !== 'umbrella') {
+      if (organisationType === 'board' && parentOrganisation.type !== 'umbrella') {
         return { message: 'A board can only belong to an umbrella' };
       }
 
-      if (schoolType === 'umbrella') {
+      if (organisationType === 'umbrella') {
         return { message: 'An umbrella cannot belong to something else' };
       }
     }
 }
 
-/* POST create new school */
+/* POST create new organisation */
 router.post('/', async function(req, res, next) {
   try {
     req.body._id = Uuid.v4();
@@ -87,50 +87,50 @@ router.post('/', async function(req, res, next) {
       return res.status(400).json(parentTypeError);
     }
 
-    const school = await Organisation.create(req.body);
-    res.status(201).json(school);
+    const organisation = await Organisation.create(req.body);
+    res.status(201).json(organisation);
   } catch (error) {
     next(error);
   }
 });
 
-/* PUT update school by UUID (permalink) */
+/* PUT update organisation by UUID (permalink) */
 router.put('/:uuid', async function(req, res, next) {
   try {
     // Don't allow updating _id
     if (req.body._id) {
-      return res.status(400).json({ message: 'Cannot change school ID' });
+      return res.status(400).json({ message: 'Cannot change organisation ID' });
     }
 
-    const school = await Organisation.findById(req.params.uuid);
-    if (!school) {
-      return res.status(404).json({ message: 'School not found' });
+    const organisation = await Organisation.findById(req.params.uuid);
+    if (!organisation) {
+      return res.status(404).json({ message: 'Organisation not found' });
     }
-    // validate 'belongsTo' hierarchy. If 'type' is not provided in the update, use the existing school's type
-    const parentTypeError = await checkIfParentIsOfValidType(req.body.type || school.type, req.body.belongsTo);
+    // validate 'belongsTo' hierarchy. If 'type' is not provided in the update, use the existing organisation's type
+    const parentTypeError = await checkIfParentIsOfValidType(req.body.type || organisation.type, req.body.belongsTo);
     if (parentTypeError) {
       return res.status(400).json(parentTypeError);
     }
 
-    // Update the school
-    const updatedSchool = await Organisation.findByIdAndUpdate(
+    // Update the organisation
+    const updatedOrganisation = await Organisation.findByIdAndUpdate(
       req.params.uuid,
       req.body,
       { new: true, runValidators: true }
     );
 
-    res.json(updatedSchool);
+    res.json(updatedOrganisation);
   } catch (error) {
     next(error);
   }
 });
 
-/* DELETE school by UUID (permalink) */
+/* DELETE organisation by UUID (permalink) */
 router.delete('/:uuid', async function(req, res, next) {
   try {
-    const school = await Organisation.findById(req.params.uuid);
-    if (!school) {
-      return res.status(404).json({ message: 'School not found' });
+    const organisation = await Organisation.findById(req.params.uuid);
+    if (!organisation) {
+      return res.status(404).json({ message: 'Organisation not found' });
     }
 
     // Check if any organisations belong to this organisation

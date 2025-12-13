@@ -277,7 +277,7 @@ describe('School Validation Tests', function () {
                     })
                     .expect(400);
 
-                assert.strictEqual(response.body.message, 'Parent school not found');
+                assert.strictEqual(response.body.message, 'Parent organisation not found');
             });
         });
 
@@ -382,7 +382,7 @@ describe('School Validation Tests', function () {
                     .get('/organisations/nonexistent-school-id')
                     .expect(404);
 
-                assert.strictEqual(response.body.message, 'School not found');
+                assert.strictEqual(response.body.message, 'Organisation not found');
             });
         });
 
@@ -448,7 +448,7 @@ describe('School Validation Tests', function () {
                     })
                     .expect(400);
 
-                assert.strictEqual(response.body.message, 'Parent school not found');
+                assert.strictEqual(response.body.message, 'Parent organisation not found');
             });
         });
 
@@ -787,23 +787,14 @@ describe('Course Validation Tests', function () {
 
         describe('DELETE /courses/:uuid', function () {
             it('should delete a course', async function () {
-                const courseToDelete = await Course.create({
-                    _id: 'api-test-course-delete',
-                    name: 'API_TEST_COURSE_To Delete',
-                    subject: 'Test',
-                    year: 1,
-                    teacher: 'Test Leeraar',
-                    school: testSchool._id
-                });
-
                 const response = await request(app)
-                    .delete(`/courses/${courseToDelete._id}`)
+                    .delete(`/courses/${testCourse._id}`)
                     .expect(200);
 
                 assert.strictEqual(response.body.message, 'Course deleted successfully');
-                assert.strictEqual(response.body.course._id, courseToDelete._id);
+                assert.strictEqual(response.body.course._id, testCourse._id);
 
-                const deletedCourse = await Course.findById(courseToDelete._id);
+                const deletedCourse = await Course.findById(testCourse._id);
                 assert.strictEqual(deletedCourse, null);
             });
 
