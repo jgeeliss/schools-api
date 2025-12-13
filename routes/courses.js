@@ -5,7 +5,7 @@ const School = require('../models/school');
 const Uuid = require('uuid');
 
 /* GET form to create new course */
-router.get('/new', async function(req, res, next) {
+router.get('/new', async function (req, res, next) {
   try {
     // note: $in operator to filter by multiple types
     // source: https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015
@@ -20,7 +20,7 @@ router.get('/new', async function(req, res, next) {
 });
 
 /* GET all courses */
-router.get('/', async function(req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
     const query = {};
 
@@ -43,7 +43,7 @@ router.get('/', async function(req, res, next) {
 });
 
 /* GET course by UUID (permalink) */
-router.get('/:uuid', async function(req, res, next) {
+router.get('/:uuid', async function (req, res, next) {
   try {
     const course = await Course.findById(req.params.uuid);
     if (!course) {
@@ -55,8 +55,28 @@ router.get('/:uuid', async function(req, res, next) {
   }
 });
 
-/* POST create new school */
-router.post('/', async function(req, res, next) {
+function validateSchoolExists(schoolId) {
+  return School.findById(schoolId);
+}
+
+function validateYearIsValid(year) {
+  // TODO: define valid years in the config file
+  const validYears = [1, 2, 3, 4, 5, 6];
+  return validYears.includes(year);
+}
+
+async function validateCourseData(courseData) {
+  if (courseData.school && !await validateSchoolExists(courseData.school)) {
+    return { message: 'Parent school not found' };
+  }
+  if (courseData.year && !validateYearIsValid(courseData.year)) {
+    return { message: 'Invalid year' };
+  }
+  return null; // Return null when validation passes
+}
+
+/* POST create new course */
+router.post('/', async function (req, res, next) {
   try {
     req.body._id = Uuid.v4();
     const course = await Course.create(req.body);
@@ -66,10 +86,39 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-// TODO: Add PUT route to update course
+/* PUT update course by UUID */
+router.put('/:uuid', async function (req, res, next) {
+  try {
+    // Don't allow updating _id
+    if (req.body._id) {
+      return res.status(400).json({ message: 'Cannot change course ID' });
+    }
+
+    const course = await Course.findById(req.params.uuid);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const validationError = await validateCourseData(req.body);
+    if (validationError) {
+      return res.status(400).json(validationError);
+    }
+
+    // Update the course
+    const updatedCourse = await Course.findByIdAndUpdate(
+      req.params.uuid,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    res.json(updatedCourse);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /* DELETE course by UUID (permalink) */
-router.delete('/:uuid', async function(req, res, next) {
+router.delete('/:uuid', async function (req, res, next) {
   try {
     const course = await Course.findByIdAndDelete(req.params.uuid);
     if (!course) {

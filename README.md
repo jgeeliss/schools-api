@@ -22,6 +22,8 @@ curl -X POST http://localhost:3000/schools \
 }'
 ```
 
+Users can also create a school by using the web forms at `http://localhost:3000/schools/new`. (Which makes it easier to add the "belongsTo" relationship.)
+
 ### update a school
 ```bash
 curl -X PUT http://localhost:3000/schools/{school_id} \
@@ -73,7 +75,20 @@ curl -X POST http://localhost:3000/courses \
 }'
 ```
 
-Users can also create a school or a course by using the web forms at `http://localhost:3000/schools/new` and `http://localhost:3000/courses/new`. (Which makes it easier to add the "belongsTo" and "school" relationships.)
+Users can also create a course by using the web form at `http://localhost:3000/courses/new`. (Which makes it easier to add the "school" relationship.)
+
+### update a course
+```bash
+curl -X PUT http://localhost:3000/courses/{course_id} \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Bijgewerkte Cursus Naam",
+  "subject": "Natuurwetenschappen",
+  "year": 2,
+  "school": "another-school-uuid",
+  "teacher": "Piet Pietersen"
+}'
+```
 
 ### get courses by year
 ```bash
