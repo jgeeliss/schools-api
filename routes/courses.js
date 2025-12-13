@@ -69,7 +69,7 @@ async function validateCourseData(courseData) {
   if (courseData.school && !await validateSchoolExists(courseData.school)) {
     return { message: 'Parent school not found' };
   }
-  if (courseData.year && !validateYearIsValid(courseData.year)) {
+  if (courseData.year != null && !validateYearIsValid(courseData.year)) {
     return { message: 'Invalid year' };
   }
   return null; // Return null when validation passes
@@ -78,6 +78,12 @@ async function validateCourseData(courseData) {
 /* POST create new course */
 router.post('/', async function (req, res, next) {
   try {
+    // Validate before setting _id
+    const validationError = await validateCourseData(req.body);
+    if (validationError) {
+      return res.status(400).json(validationError);
+    }
+
     req.body._id = Uuid.v4();
     const course = await Course.create(req.body);
     res.status(201).json(course);
