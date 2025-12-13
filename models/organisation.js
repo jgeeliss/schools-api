@@ -24,6 +24,10 @@ const organisationSchema = new mongoose.Schema({
         type: String,
         // note: this field will store the permalink of a document from another Organisation:
         ref: 'Organisation',
+        // only required for schools and boards
+        required: function() {
+            return this.type === 'school' || this.type === 'board';
+        },
         default: null
     },
     email: {

@@ -139,6 +139,22 @@ describe('School Validation Tests', function () {
                     assert(error.errors.type);
                 }
             });
+
+            it('should require belongsTo for school', async function () {
+                try {
+                    await Organisation.create({
+                        _id: 'test-school-no-belongsTo',
+                        name: 'TEST_School No BelongsTo',
+                        type: 'school',
+                        email: 'test@example.com',
+                        telephone: '1234567890'
+                    });
+                    assert.fail('Should have thrown validation error');
+                } catch (error) {
+                    assert(error.name === 'ValidationError');
+                    assert(error.errors.belongsTo);
+                }
+            });
         });
 
         describe('Email Lowercase Validation', function () {
@@ -147,6 +163,7 @@ describe('School Validation Tests', function () {
                     _id: 'test-email-case',
                     name: 'TEST_Email Case',
                     type: 'school',
+                    belongsTo: testBoard._id,
                     email: 'TEST@EXAMPLE.COM',
                     telephone: '1234567890'
                 });
@@ -488,6 +505,7 @@ describe('Course Validation Tests', function () {
             _id: 'test-course-school',
             name: 'TEST_COURSE_SCHOOL',
             type: 'school',
+            belongsTo: 'api-test-board',
             email: 'test-course-school@example.com',
             telephone: '1234567890'
         });
