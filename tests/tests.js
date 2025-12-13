@@ -281,6 +281,111 @@ describe('School Validation Tests', function () {
             });
         });
 
+        describe('GET /schools', function () {
+            it('should get all schools', async function () {
+                const response = await request(app)
+                    .get('/schools')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                assert(response.body.length > 0);
+            });
+
+            it('should filter schools by type (umbrella)', async function () {
+                const response = await request(app)
+                    .get('/schools?type=umbrella')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                assert(response.body.length > 0);
+                response.body.forEach(school => {
+                    assert.strictEqual(school.type, 'umbrella');
+                });
+            });
+
+            it('should filter schools by type (board)', async function () {
+                const response = await request(app)
+                    .get('/schools?type=board')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                assert(response.body.length > 0);
+                response.body.forEach(school => {
+                    assert.strictEqual(school.type, 'board');
+                });
+            });
+
+            it('should filter schools by type (school)', async function () {
+                const response = await request(app)
+                    .get('/schools?type=school')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                assert(response.body.length > 0);
+                response.body.forEach(school => {
+                    assert.strictEqual(school.type, 'school');
+                });
+            });
+
+            it('should reject invalid query parameters', async function () {
+                const response = await request(app)
+                    .get('/schools?invalid=param')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
+            });
+
+            it('should reject multiple query parameters', async function () {
+                const response = await request(app)
+                    .get('/schools?type=school&name=test')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
+            });
+        });
+
+        describe('GET /schools/:uuid', function () {
+            it('should get a specific umbrella school', async function () {
+                const response = await request(app)
+                    .get(`/schools/${testUmbrella._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body._id, testUmbrella._id);
+                assert.strictEqual(response.body.name, testUmbrella.name);
+                assert.strictEqual(response.body.type, 'umbrella');
+            });
+
+            it('should get a specific board school', async function () {
+                const response = await request(app)
+                    .get(`/schools/${testBoard._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body._id, testBoard._id);
+                assert.strictEqual(response.body.name, testBoard.name);
+                assert.strictEqual(response.body.type, 'board');
+                assert.strictEqual(response.body.belongsTo, testUmbrella._id);
+            });
+
+            it('should get a specific school', async function () {
+                const response = await request(app)
+                    .get(`/schools/${testSchool._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body._id, testSchool._id);
+                assert.strictEqual(response.body.name, testSchool.name);
+                assert.strictEqual(response.body.type, 'school');
+                assert.strictEqual(response.body.belongsTo, testBoard._id);
+            });
+
+            it('should return 404 for non-existent school', async function () {
+                const response = await request(app)
+                    .get('/schools/nonexistent-school-id')
+                    .expect(404);
+
+                assert.strictEqual(response.body.message, 'School not found');
+            });
+        });
+
         describe('PUT /schools/:uuid - Hierarchy Validation', function () {
             it('should allow updating school to belong to a different board', async function () {
                 const newBoard = await School.create({
@@ -346,6 +451,7 @@ describe('School Validation Tests', function () {
                 assert.strictEqual(response.body.message, 'Parent school not found');
             });
         });
+
     });
 
 });
