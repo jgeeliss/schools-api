@@ -11,7 +11,6 @@ const schoolsRouter = require('./routes/schools');
 const coursesRouter = require('./routes/courses');
 
 const app = express();
-
 // Initialize MongoDB connection
 run().catch(console.error);
 
@@ -19,7 +18,9 @@ run().catch(console.error);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+// disable HTTP request logging during tests
+// source: https://stackoverflow.com/questions/60129677/how-to-disable-morgan-request-logger-during-unit-test
+app.use(logger('dev', { skip: (req, res) => process.env.NODE_ENV === 'test' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

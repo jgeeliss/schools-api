@@ -5,8 +5,11 @@ const request = require('supertest');
 const app = require('../app');
 const mongoose = require('mongoose');
 const School = require('../models/school');
+const Course = require('../models/course');
 const fs = require('fs');
 const path = require('path');
+// set environment to 'test' to disable logging HTTP requests
+process.env.NODE_ENV = 'test';
 
 const configPath = path.join(__dirname, '../config/config.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -16,6 +19,8 @@ const uri = `mongodb+srv://${user}:${password}@${host}/?appName=${clusterName}`;
 describe('School Validation Tests', function () {
     // Increase timeout for database operations
     this.timeout(10000);
+
+    let testUmbrella, testBoard, testSchool;
 
     before(async function () {
         await mongoose.connect(uri);
@@ -56,7 +61,7 @@ describe('School Validation Tests', function () {
         await mongoose.connection.close();
     });
 
-    describe('Model Tests', function () {
+    describe('School Model Tests', function () {
         describe('School Type Validation', function () {
             it('should reject invalid type', async function () {
                 try {
@@ -78,7 +83,7 @@ describe('School Validation Tests', function () {
             it('should require name', async function () {
                 try {
                     await School.create({
-                        _id: 'test-no-name',
+                        _id: 'test-geen-naam',
                         type: 'school',
                         email: 'test@example.com',
                         telephone: '1234567890'
@@ -151,7 +156,7 @@ describe('School Validation Tests', function () {
         });
     });
 
-    describe('API Tests', function () {
+    describe('School API Tests', function () {
         describe('POST /schools - Hierarchy Validation', function () {
             it('should allow creating a school belonging to a board', async function () {
                 const response = await request(app)
@@ -344,4 +349,369 @@ describe('School Validation Tests', function () {
     });
 
 });
+
+describe('Course Validation Tests', function () {
+    this.timeout(10000);
+
+    let testSchool, testCourse;
+
+    before(async function () {
+        await mongoose.connect(uri);
+        await Course.deleteMany({ name: { $regex: /^TEST_COURSE_/ } });
+        await School.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
+
+        testSchool = await School.create({
+            _id: 'test-course-school',
+            name: 'TEST_COURSE_SCHOOL',
+            type: 'school',
+            email: 'test-course-school@example.com',
+            telephone: '1234567890'
+        });
+
+        testCourse = await Course.create({
+            _id: 'api-test-course',
+            name: 'API_TEST_COURSE_Wiskunde',
+            subject: 'Wiskunde',
+            year: 1,
+            teacher: 'Jan Leeraar',
+            school: testSchool._id
+
+        });
+    });
+
+    after(async function () {
+        await Course.deleteMany({ name: { $regex: /^TEST_COURSE_/ } });
+        await School.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
+        await Course.deleteMany({ name: { $regex: /^API_TEST_COURSE_/ } });
+        await School.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
+        await Course.deleteMany({ name: { $regex: /^API_TEST_COURSE_/ } });
+        await School.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
+        await mongoose.connection.close();
+    });
+
+    describe('Course Model Tests', function () {
+        describe('Required Fields Validation', function () {
+            it('should require name', async function () {
+                try {
+                    await Course.create({
+                        _id: 'test-course-no-name',
+                        subject: 'Wiskunde',
+                        year: 1,
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    });
+                    assert.fail('Should have thrown validation error');
+                } catch (error) {
+                    assert(error.name === 'ValidationError');
+                    assert(error.errors.name);
+                }
+            });
+
+            it('should require subject', async function () {
+                try {
+                    await Course.create({
+                        _id: 'test-course-no-subject',
+                        name: 'TEST_COURSE_Math 101',
+                        year: 1,
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    });
+                    assert.fail('Should have thrown validation error');
+                } catch (error) {
+                    assert(error.name === 'ValidationError');
+                    assert(error.errors.subject);
+                }
+            });
+
+            it('should require year', async function () {
+                try {
+                    await Course.create({
+                        _id: 'test-course-no-year',
+                        name: 'TEST_COURSE_Math 101',
+                        subject: 'Wiskunde',
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    });
+                    assert.fail('Should have thrown validation error');
+                } catch (error) {
+                    assert(error.name === 'ValidationError');
+                    assert(error.errors.year);
+                }
+            });
+
+            it('should require teacher', async function () {
+                try {
+                    await Course.create({
+                        _id: 'test-course-no-teacher',
+                        name: 'TEST_COURSE_Math 101',
+                        subject: 'Wiskunde',
+                        year: 1,
+                        school: testSchool._id
+                    });
+                    assert.fail('Should have thrown validation error');
+                } catch (error) {
+                    assert(error.name === 'ValidationError');
+                    assert(error.errors.teacher);
+                }
+            });
+        });
+
+        describe('Course Creation', function () {
+            it('should create a course with all required fields', async function () {
+                const course = await Course.create({
+                    _id: 'test-course-valid',
+                    name: 'TEST_COURSE_Valid Course',
+                    subject: 'Science',
+                    year: 3,
+                    teacher: 'Julienne Reinders',
+                    school: testSchool._id
+                });
+
+                assert.strictEqual(course.name, 'TEST_COURSE_Valid Course');
+                assert.strictEqual(course.subject, 'Science');
+                assert.strictEqual(course.year, 3);
+                assert.strictEqual(course.teacher, 'Julienne Reinders');
+                assert.strictEqual(course.school, testSchool._id);
+            });
+        });
+
+        describe('Unique ID Validation', function () {
+            it('should reject duplicate _id', async function () {
+                const duplicateId = 'test-course-duplicate';
+
+                await Course.create({
+                    _id: duplicateId,
+                    name: 'TEST_COURSE_First',
+                    subject: 'Wiskunde',
+                    year: 1,
+                    teacher: 'Leeraar One',
+                    school: testSchool._id
+                });
+
+                try {
+                    await Course.create({
+                        _id: duplicateId,
+                        name: 'TEST_COURSE_Second',
+                        subject: 'Wiskunde',
+                        year: 1,
+                        teacher: 'Leeraar Two',
+                        school: testSchool._id
+                    });
+                    assert.fail('Should have thrown duplicate key error');
+                } catch (error) {
+                    assert(error.code === 11000);
+                }
+            });
+        });
+    });
+
+    describe('Course API Tests', function () {
+
+        describe('POST /courses - Course Creation', function () {
+            it('should create a course with valid data', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Physics',
+                        subject: 'Physics',
+                        year: 2,
+                        teacher: 'Dr. Smith',
+                        school: testSchool._id
+                    })
+                    .expect(201);
+
+                assert.strictEqual(response.body.name, 'API_TEST_COURSE_Physics');
+                assert.strictEqual(response.body.subject, 'Physics');
+                assert.strictEqual(response.body.year, 2);
+                assert.strictEqual(response.body.school, testSchool._id);
+            });
+
+            it('should reject invalid year (less than 1)', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Invalid Year',
+                        subject: 'Wiskunde',
+                        year: 0,
+                        teacher: 'Leeraar',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid year');
+            });
+
+            it('should reject invalid year (greater than 6)', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Invalid Year 2',
+                        subject: 'Wiskunde',
+                        year: 7,
+                        teacher: 'Leeraar',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid year');
+            });
+
+            it('should reject non-existent school', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Bad School',
+                        subject: 'Wiskunde',
+                        year: 1,
+                        teacher: 'Leeraar',
+                        school: 'nonexistent-school-id'
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Parent school not found');
+            });
+        });
+
+        describe('GET /courses', function () {
+            it('should get all courses', async function () {
+                const response = await request(app)
+                    .get('/courses')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                assert(response.body.length > 0);
+            });
+
+            it('should filter courses by year', async function () {
+                const response = await request(app)
+                    .get('/courses?year=1')
+                    .expect(200);
+
+                assert(Array.isArray(response.body));
+                response.body.forEach(course => {
+                    assert.strictEqual(course.year, 1);
+                });
+            });
+
+            it('should reject invalid query parameters', async function () {
+                const response = await request(app)
+                    .get('/courses?invalid=param')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "year" is allowed.');
+            });
+        });
+
+        describe('GET /courses/:uuid', function () {
+            it('should get a specific course', async function () {
+                const response = await request(app)
+                    .get(`/courses/${testCourse._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body._id, testCourse._id);
+                assert.strictEqual(response.body.name, testCourse.name);
+            });
+
+            it('should return 404 for non-existent course', async function () {
+                const response = await request(app)
+                    .get('/courses/nonexistent-course-id')
+                    .expect(404);
+
+                assert.strictEqual(response.body.message, 'Course not found');
+            });
+        });
+
+        describe('PUT /courses/:uuid', function () {
+            it('should update a course', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        name: 'API_TEST_COURSE_Updated Wiskunde'
+                    })
+                    .expect(200);
+
+                assert.strictEqual(response.body.name, 'API_TEST_COURSE_Updated Wiskunde');
+                assert.strictEqual(response.body._id, testCourse._id);
+            });
+
+            it('should reject updating to invalid year', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        year: 10
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Invalid year');
+            });
+
+            it('should reject updating to non-existent school', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        school: 'nonexistent-school-id'
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Parent school not found');
+            });
+
+            it('should reject changing course _id', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        _id: 'new-id-123'
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Cannot change course ID');
+            });
+
+            it('should return 404 for non-existent course', async function () {
+                const response = await request(app)
+                    .put('/courses/nonexistent-course-id')
+                    .send({
+                        name: 'Updated'
+                    })
+                    .expect(404);
+
+                assert.strictEqual(response.body.message, 'Course not found');
+            });
+        });
+
+        describe('DELETE /courses/:uuid', function () {
+            it('should delete a course', async function () {
+                const courseToDelete = await Course.create({
+                    _id: 'api-test-course-delete',
+                    name: 'API_TEST_COURSE_To Delete',
+                    subject: 'Test',
+                    year: 1,
+                    teacher: 'Test Leeraar',
+                    school: testSchool._id
+                });
+
+                const response = await request(app)
+                    .delete(`/courses/${courseToDelete._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body.message, 'Course deleted successfully');
+                assert.strictEqual(response.body.course._id, courseToDelete._id);
+
+                const deletedCourse = await Course.findById(courseToDelete._id);
+                assert.strictEqual(deletedCourse, null);
+            });
+
+            it('should return 404 for non-existent course', async function () {
+                const response = await request(app)
+                    .delete('/courses/nonexistent-course-id')
+                    .expect(404);
+
+                assert.strictEqual(response.body.message, 'Course not found');
+            });
+        });
+    });
+
+});
+
+
 

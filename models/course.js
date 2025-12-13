@@ -26,6 +26,7 @@ const courseSchema = new mongoose.Schema({
     },
     school: {
         type: String,
+        required: [true, 'School is required'],
         // note: this field will store the permalink of a document from a School:
         ref: 'School',
         default: null
