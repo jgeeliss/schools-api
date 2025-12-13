@@ -452,6 +452,24 @@ describe('School Validation Tests', function () {
             });
         });
 
+        describe('DELETE /organisations/:uuid', function () {
+            it('should delete an existing organisation', async function () {
+                const response = await request(app)
+                    .delete(`/organisations/${testSchool._id}`)
+                    .expect(200);
+
+                assert.strictEqual(response.body.message, 'Organisation deleted successfully');
+                assert.strictEqual(response.body.organisation._id, testSchool._id);
+            });
+
+            it('should return 404 for non-existent organisation', async function () {
+                const response = await request(app)
+                    .delete('/organisations/nonexistent-organisation-id')
+                    .expect(404);
+
+                assert.strictEqual(response.body.message, 'Organisation not found');
+            });
+        });
     });
 
 });
