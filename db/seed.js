@@ -149,9 +149,10 @@ async function seed() {
     try {
         await run();
 
-        // Clear existing data
-        await School.deleteMany({});
-        console.log('Cleared existing schools data');
+        // Reset database before seeding
+        console.log('Resetting database...');
+        await mongoose.connection.db.dropDatabase();
+        console.log('Database cleared');
 
         // Create umbrellas first
         const createdUmbrellas = [];
