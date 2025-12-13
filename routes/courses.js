@@ -69,7 +69,7 @@ async function validateCourseData(courseData) {
   if (courseData.school && !await validateSchoolExists(courseData.school)) {
     return { message: 'Parent school not found' };
   }
-  if (courseData.year != null && !validateYearIsValid(courseData.year)) {
+  if (courseData.year != null && !validateYearIsValid(Number(courseData.year))) {
     return { message: 'Invalid year' };
   }
   return null; // Return null when validation passes

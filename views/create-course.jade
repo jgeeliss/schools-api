@@ -18,8 +18,8 @@ block content
                 option(value='5') 5de leerjaar
                 option(value='6') 6de leerjaar
         div
-            label(for='belongsTo' style='display: inline-block; width: 120px;') School:
-            select(name='belongsTo')
+            label(for='school' style='display: inline-block; width: 120px;') School:
+            select(name='school')
                 option(value='' style='font-family: monospace;') Geen school
                 each school in schools
                     option(value=school._id style='font-family: monospace;')= school._id + ' - ' + school.name
