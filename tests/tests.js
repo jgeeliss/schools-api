@@ -4,7 +4,7 @@ const assert = require('assert');
 const request = require('supertest');
 const app = require('../app');
 const mongoose = require('mongoose');
-const School = require('../models/school');
+const Organisation = require('../models/organisation');
 const Course = require('../models/course');
 const fs = require('fs');
 const path = require('path');
@@ -25,9 +25,9 @@ describe('School Validation Tests', function () {
     before(async function () {
         await mongoose.connect(uri);
         // Clean up test data
-        await School.deleteMany({ name: { $regex: /^TEST_/ } });
-        await School.deleteMany({ name: { $regex: /^API_TEST_/ } });
-        testUmbrella = await School.create({
+        await Organisation.deleteMany({ name: { $regex: /^TEST_/ } });
+        await Organisation.deleteMany({ name: { $regex: /^API_TEST_/ } });
+        testUmbrella = await Organisation.create({
             _id: 'api-test-umbrella',
             name: 'API_TEST_Umbrella',
             type: 'umbrella',
@@ -35,7 +35,7 @@ describe('School Validation Tests', function () {
             telephone: '1234567890'
         });
 
-        testBoard = await School.create({
+        testBoard = await Organisation.create({
             _id: 'api-test-board',
             name: 'API_TEST_Board',
             type: 'board',
@@ -44,7 +44,7 @@ describe('School Validation Tests', function () {
             telephone: '1234567890'
         });
 
-        testSchool = await School.create({
+        testSchool = await Organisation.create({
             _id: 'api-test-school',
             name: 'API_TEST_School',
             type: 'school',
@@ -56,8 +56,8 @@ describe('School Validation Tests', function () {
 
     after(async function () {
         // Clean up test data
-        await School.deleteMany({ name: { $regex: /^TEST_/ } });
-        await School.deleteMany({ name: { $regex: /^API_TEST_/ } });
+        await Organisation.deleteMany({ name: { $regex: /^TEST_/ } });
+        await Organisation.deleteMany({ name: { $regex: /^API_TEST_/ } });
         await mongoose.connection.close();
     });
 
@@ -65,7 +65,7 @@ describe('School Validation Tests', function () {
         describe('School Type Validation', function () {
             it('should reject invalid type', async function () {
                 try {
-                    await School.create({
+                    await Organisation.create({
                         _id: 'test-invalid',
                         name: 'TEST_Invalid Type',
                         type: 'invalid_type',
@@ -82,7 +82,7 @@ describe('School Validation Tests', function () {
         describe('Required Fields Validation', function () {
             it('should require name', async function () {
                 try {
-                    await School.create({
+                    await Organisation.create({
                         _id: 'test-geen-naam',
                         type: 'school',
                         email: 'test@example.com',
@@ -97,7 +97,7 @@ describe('School Validation Tests', function () {
 
             it('should require email', async function () {
                 try {
-                    await School.create({
+                    await Organisation.create({
                         _id: 'test-no-email',
                         name: 'TEST_No Email',
                         type: 'school',
@@ -112,7 +112,7 @@ describe('School Validation Tests', function () {
 
             it('should require telephone', async function () {
                 try {
-                    await School.create({
+                    await Organisation.create({
                         _id: 'test-no-phone',
                         name: 'TEST_No Phone',
                         type: 'school',
@@ -127,7 +127,7 @@ describe('School Validation Tests', function () {
 
             it('should require type', async function () {
                 try {
-                    await School.create({
+                    await Organisation.create({
                         _id: 'test-no-type',
                         name: 'TEST_No Type',
                         email: 'test@example.com',
@@ -143,7 +143,7 @@ describe('School Validation Tests', function () {
 
         describe('Email Lowercase Validation', function () {
             it('should convert email to lowercase', async function () {
-                const school = await School.create({
+                const school = await Organisation.create({
                     _id: 'test-email-case',
                     name: 'TEST_Email Case',
                     type: 'school',
@@ -157,10 +157,10 @@ describe('School Validation Tests', function () {
     });
 
     describe('School API Tests', function () {
-        describe('POST /schools - Hierarchy Validation', function () {
+        describe('POST /organisations - Hierarchy Validation', function () {
             it('should allow creating a school belonging to a board', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Valid School',
                         type: 'school',
@@ -176,7 +176,7 @@ describe('School Validation Tests', function () {
 
             it('should allow creating a board belonging to an umbrella', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Valid Board',
                         type: 'board',
@@ -192,7 +192,7 @@ describe('School Validation Tests', function () {
 
             it('should reject a school belonging to an umbrella', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Invalid School',
                         type: 'school',
@@ -207,7 +207,7 @@ describe('School Validation Tests', function () {
 
             it('should reject a school belonging to another school', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Invalid School 2',
                         type: 'school',
@@ -222,7 +222,7 @@ describe('School Validation Tests', function () {
 
             it('should reject a board belonging to another board', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Invalid Board',
                         type: 'board',
@@ -237,7 +237,7 @@ describe('School Validation Tests', function () {
 
             it('should reject a board belonging to a school', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Invalid Board 2',
                         type: 'board',
@@ -252,7 +252,7 @@ describe('School Validation Tests', function () {
 
             it('should reject an umbrella with a belongsTo value', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Invalid Umbrella',
                         type: 'umbrella',
@@ -267,7 +267,7 @@ describe('School Validation Tests', function () {
 
             it('should reject belongsTo with non-existent parent', async function () {
                 const response = await request(app)
-                    .post('/schools')
+                    .post('/organisations')
                     .send({
                         name: 'API_TEST_Nonexistent Parent',
                         type: 'school',
@@ -281,19 +281,19 @@ describe('School Validation Tests', function () {
             });
         });
 
-        describe('GET /schools', function () {
-            it('should get all schools', async function () {
+        describe('GET /organisations', function () {
+            it('should get all organisations', async function () {
                 const response = await request(app)
-                    .get('/schools')
+                    .get('/organisations')
                     .expect(200);
 
                 assert(Array.isArray(response.body));
                 assert(response.body.length > 0);
             });
 
-            it('should filter schools by type (umbrella)', async function () {
+            it('should filter organisations by type (umbrella)', async function () {
                 const response = await request(app)
-                    .get('/schools?type=umbrella')
+                    .get('/organisations?type=umbrella')
                     .expect(200);
 
                 assert(Array.isArray(response.body));
@@ -303,9 +303,9 @@ describe('School Validation Tests', function () {
                 });
             });
 
-            it('should filter schools by type (board)', async function () {
+            it('should filter organisations by type (board)', async function () {
                 const response = await request(app)
-                    .get('/schools?type=board')
+                    .get('/organisations?type=board')
                     .expect(200);
 
                 assert(Array.isArray(response.body));
@@ -315,9 +315,9 @@ describe('School Validation Tests', function () {
                 });
             });
 
-            it('should filter schools by type (school)', async function () {
+            it('should filter organisations by type (school)', async function () {
                 const response = await request(app)
-                    .get('/schools?type=school')
+                    .get('/organisations?type=school')
                     .expect(200);
 
                 assert(Array.isArray(response.body));
@@ -329,7 +329,7 @@ describe('School Validation Tests', function () {
 
             it('should reject invalid query parameters', async function () {
                 const response = await request(app)
-                    .get('/schools?invalid=param')
+                    .get('/organisations?invalid=param')
                     .expect(400);
 
                 assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
@@ -337,17 +337,17 @@ describe('School Validation Tests', function () {
 
             it('should reject multiple query parameters', async function () {
                 const response = await request(app)
-                    .get('/schools?type=school&name=test')
+                    .get('/organisations?type=school&name=test')
                     .expect(400);
 
                 assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
             });
         });
 
-        describe('GET /schools/:uuid', function () {
+        describe('GET /organisations/:uuid', function () {
             it('should get a specific umbrella school', async function () {
                 const response = await request(app)
-                    .get(`/schools/${testUmbrella._id}`)
+                    .get(`/organisations/${testUmbrella._id}`)
                     .expect(200);
 
                 assert.strictEqual(response.body._id, testUmbrella._id);
@@ -357,7 +357,7 @@ describe('School Validation Tests', function () {
 
             it('should get a specific board school', async function () {
                 const response = await request(app)
-                    .get(`/schools/${testBoard._id}`)
+                    .get(`/organisations/${testBoard._id}`)
                     .expect(200);
 
                 assert.strictEqual(response.body._id, testBoard._id);
@@ -368,7 +368,7 @@ describe('School Validation Tests', function () {
 
             it('should get a specific school', async function () {
                 const response = await request(app)
-                    .get(`/schools/${testSchool._id}`)
+                    .get(`/organisations/${testSchool._id}`)
                     .expect(200);
 
                 assert.strictEqual(response.body._id, testSchool._id);
@@ -379,16 +379,16 @@ describe('School Validation Tests', function () {
 
             it('should return 404 for non-existent school', async function () {
                 const response = await request(app)
-                    .get('/schools/nonexistent-school-id')
+                    .get('/organisations/nonexistent-school-id')
                     .expect(404);
 
                 assert.strictEqual(response.body.message, 'School not found');
             });
         });
 
-        describe('PUT /schools/:uuid - Hierarchy Validation', function () {
+        describe('PUT /organisations/:uuid - Hierarchy Validation', function () {
             it('should allow updating school to belong to a different board', async function () {
-                const newBoard = await School.create({
+                const newBoard = await Organisation.create({
                     _id: 'api-test-new-board',
                     name: 'API_TEST_New Board',
                     type: 'board',
@@ -398,7 +398,7 @@ describe('School Validation Tests', function () {
                 });
 
                 const response = await request(app)
-                    .put(`/schools/${testSchool._id}`)
+                    .put(`/organisations/${testSchool._id}`)
                     .send({
                         belongsTo: newBoard._id
                     })
@@ -409,7 +409,7 @@ describe('School Validation Tests', function () {
 
             it('should reject updating school to belong to an umbrella', async function () {
                 const response = await request(app)
-                    .put(`/schools/${testSchool._id}`)
+                    .put(`/organisations/${testSchool._id}`)
                     .send({
                         belongsTo: testUmbrella._id
                     })
@@ -420,7 +420,7 @@ describe('School Validation Tests', function () {
 
             it('should reject updating board to belong to a school', async function () {
                 const response = await request(app)
-                    .put(`/schools/${testBoard._id}`)
+                    .put(`/organisations/${testBoard._id}`)
                     .send({
                         belongsTo: testSchool._id
                     })
@@ -431,7 +431,7 @@ describe('School Validation Tests', function () {
 
             it('should reject changing umbrella to have a parent', async function () {
                 const response = await request(app)
-                    .put(`/schools/${testUmbrella._id}`)
+                    .put(`/organisations/${testUmbrella._id}`)
                     .send({
                         belongsTo: testUmbrella._id
                     })
@@ -442,7 +442,7 @@ describe('School Validation Tests', function () {
 
             it('should reject updating belongsTo to non-existent parent', async function () {
                 const response = await request(app)
-                    .put(`/schools/${testSchool._id}`)
+                    .put(`/organisations/${testSchool._id}`)
                     .send({
                         belongsTo: 'nonexistent-id-99999'
                     })
@@ -464,9 +464,9 @@ describe('Course Validation Tests', function () {
     before(async function () {
         await mongoose.connect(uri);
         await Course.deleteMany({ name: { $regex: /^TEST_COURSE_/ } });
-        await School.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
+        await Organisation.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
 
-        testSchool = await School.create({
+        testSchool = await Organisation.create({
             _id: 'test-course-school',
             name: 'TEST_COURSE_SCHOOL',
             type: 'school',
@@ -487,11 +487,11 @@ describe('Course Validation Tests', function () {
 
     after(async function () {
         await Course.deleteMany({ name: { $regex: /^TEST_COURSE_/ } });
-        await School.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
+        await Organisation.deleteMany({ name: { $regex: /^TEST_COURSE_SCHOOL/ } });
         await Course.deleteMany({ name: { $regex: /^API_TEST_COURSE_/ } });
-        await School.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
+        await Organisation.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
         await Course.deleteMany({ name: { $regex: /^API_TEST_COURSE_/ } });
-        await School.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
+        await Organisation.deleteMany({ name: { $regex: /^API_TEST_COURSE_SCHOOL/ } });
         await mongoose.connection.close();
     });
 

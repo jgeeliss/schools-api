@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const School = require('../models/school');
+const Organisation = require('../models/organisation');
 const Course = require('../models/course');
 const Uuid = require('uuid');
 
@@ -10,16 +10,16 @@ router.get('/new', async function(req, res, next) {
     // note: $in operator to filter by multiple types
     // source: https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015
     // note: we fetch both boards and umbrellas as possible parents and pass them to the view
-    const schools = await School.find({ type: { $in: ['board', 'umbrella'] } });
+    const organisations = await Organisation.find({ type: { $in: ['board', 'umbrella'] } });
     res.render('create-school', {
-      schools: schools
+      organisations: organisations
     });
   } catch (error) {
     next(error);
   }
 });
 
-/* GET all schools */
+/* GET all organisations */
 router.get('/', async function(req, res, next) {
   try {
     const query = {};
@@ -35,8 +35,8 @@ router.get('/', async function(req, res, next) {
       query.type = req.query.type;
     }
 
-    const schools = await School.find(query);
-    res.json(schools);
+    const organisations = await Organisation.find(query);
+    res.json(organisations);
   } catch (error) {
     next(error);
   }
@@ -45,7 +45,7 @@ router.get('/', async function(req, res, next) {
 /* GET school by UUID (permalink) */
 router.get('/:uuid', async function(req, res, next) {
   try {
-    const school = await School.findById(req.params.uuid);
+    const school = await Organisation.findById(req.params.uuid);
     if (!school) {
       return res.status(404).json({ message: 'School not found' });
     }
@@ -57,7 +57,7 @@ router.get('/:uuid', async function(req, res, next) {
 
 async function checkIfParentIsOfValidType(schoolType, belongsToId) {
     if (belongsToId) {
-      const parentSchool = await School.findById(belongsToId);
+      const parentSchool = await Organisation.findById(belongsToId);
       if (!parentSchool) {
         return { message: 'Parent school not found' };
       }
@@ -87,7 +87,7 @@ router.post('/', async function(req, res, next) {
       return res.status(400).json(parentTypeError);
     }
 
-    const school = await School.create(req.body);
+    const school = await Organisation.create(req.body);
     res.status(201).json(school);
   } catch (error) {
     next(error);
@@ -102,7 +102,7 @@ router.put('/:uuid', async function(req, res, next) {
       return res.status(400).json({ message: 'Cannot change school ID' });
     }
 
-    const school = await School.findById(req.params.uuid);
+    const school = await Organisation.findById(req.params.uuid);
     if (!school) {
       return res.status(404).json({ message: 'School not found' });
     }
@@ -113,7 +113,7 @@ router.put('/:uuid', async function(req, res, next) {
     }
 
     // Update the school
-    const updatedSchool = await School.findByIdAndUpdate(
+    const updatedSchool = await Organisation.findByIdAndUpdate(
       req.params.uuid,
       req.body,
       { new: true, runValidators: true }
@@ -128,35 +128,35 @@ router.put('/:uuid', async function(req, res, next) {
 /* DELETE school by UUID (permalink) */
 router.delete('/:uuid', async function(req, res, next) {
   try {
-    const school = await School.findById(req.params.uuid);
+    const school = await Organisation.findById(req.params.uuid);
     if (!school) {
       return res.status(404).json({ message: 'School not found' });
     }
 
-    // Check if any schools belong to this school
-    const childSchools = await School.countDocuments({ belongsTo: req.params.uuid });
-    if (childSchools > 0) {
+    // Check if any organisations belong to this organisation
+    const childOrganisations = await Organisation.countDocuments({ belongsTo: req.params.uuid });
+    if (childOrganisations > 0) {
       return res.status(400).json({
-        message: 'Cannot delete school with child schools. Please delete or reassign child schools first.',
-        // TODO: need to be add an update route for schools!
-        // inform how many child schools exist:
-        numberOfChildSchools: childSchools
+        message: 'Cannot delete organisation with child organisations. Please delete or reassign child organisations first.',
+        // TODO: need to be add an update route for organisations!
+        // inform how many child organisations exist:
+        numberOfChildOrganisations: childOrganisations
       });
     }
 
-    // Check if any courses belong to this school
-    const coursesCount = await Course.countDocuments({ school: req.params.uuid });
+    // Check if any courses belong to this organisation
+    const coursesCount = await Course.countDocuments({ organisation: req.params.uuid });
     if (coursesCount > 0) {
       return res.status(400).json({
-        message: 'Cannot delete school with courses. Please delete or reassign courses first.',
+        message: 'Cannot delete organisation with courses. Please delete or reassign courses first.',
         // TODO: need to be add an update route for courses too!
         numberOfCourses: coursesCount
       });
     }
 
-    // no children or courses, delete the school
-    await School.findByIdAndDelete(req.params.uuid);
-    res.json({ message: 'School deleted successfully', school: school });
+    // no children or courses, delete the organisation
+    await Organisation.findByIdAndDelete(req.params.uuid);
+    res.json({ message: 'Organisation deleted successfully', organisation: organisation });
   } catch (error) {
     next(error);
   }

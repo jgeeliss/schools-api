@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const School = require('../models/school');
+const Organisation = require('../models/organisation');
 const Uuid = require('uuid');
 const { run } = require('./db');
 
@@ -158,7 +158,7 @@ async function seed() {
         const createdUmbrellas = [];
         for (const umbrella of umbrellas) {
             umbrella._id = Uuid.v4();
-            const created = await School.create(umbrella);
+            const created = await Organisation.create(umbrella);
             createdUmbrellas.push(created);
             console.log(`Created umbrella: ${created.name}`);
         }
@@ -168,7 +168,7 @@ async function seed() {
             board._id = Uuid.v4();
             const randomUmbrella = createdUmbrellas[Math.floor(Math.random() * createdUmbrellas.length)];
             board.belongsTo = randomUmbrella._id;
-            const created = await School.create(board);
+            const created = await Organisation.create(board);
             console.log(`Created board: ${created.name}${created.belongsTo ? ' (with umbrella)' : ''}`);
         }
 
@@ -177,7 +177,7 @@ async function seed() {
             school._id = Uuid.v4();
             const randomBoard = boards[Math.floor(Math.random() * boards.length)];
             school.belongsTo = randomBoard._id;
-            const created = await School.create(school);
+            const created = await Organisation.create(school);
             console.log(`Created school: ${created.name}${created.belongsTo ? ' (with board)' : ''}`);
         }
 

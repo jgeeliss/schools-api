@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Course = require('../models/course');
-const School = require('../models/school');
+const Organisation = require('../models/organisation');
 const Uuid = require('uuid');
 
 /* GET form to create new course */
@@ -10,7 +10,7 @@ router.get('/new', async function (req, res, next) {
     // note: $in operator to filter by multiple types
     // source: https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015
     // note: we fetch both boards and umbrellas as possible parents and pass them to the view
-    const schools = await School.find({ type: { $in: ['school'] } });
+    const schools = await Organisation.find({ type: { $in: ['school'] } });
     res.render('create-course', {
       schools: schools
     });
@@ -56,7 +56,7 @@ router.get('/:uuid', async function (req, res, next) {
 });
 
 function validateSchoolExists(schoolId) {
-  return School.findById(schoolId);
+  return Organisation.findById(schoolId);
 }
 
 function validateYearIsValid(year) {

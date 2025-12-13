@@ -3,15 +3,15 @@
 A simple RESTful API for managing schools, school boards, and umbrella organizations and courses using Node.js, Express, and MongoDB.
 
 ## Features
-- Create, read, update, and delete schools & courses
-- Support for school boards and umbrella organizations
+- Create, read, update, and delete organisations & courses
+- Support for schools, school boards and umbrella organizations
 - Validation and error handling
-- UUIDs for unique identification of schools and courses
+- UUIDs for unique identification of organisations and courses
 
-## Schools
-### create a school
+## Organisations
+### create an organisation
 ```bash
-curl -X POST http://localhost:3000/schools \
+curl -X POST http://localhost:3000/organisations \
 -H "Content-Type: application/json" \
 -d '{
   "name": "Voorbeeld School",
@@ -22,37 +22,37 @@ curl -X POST http://localhost:3000/schools \
 }'
 ```
 
-Users can also create a school by using the web forms at `http://localhost:3000/schools/new`. (Which makes it easier to add the "belongsTo" relationship.)
+Users can also create an organisation by using the web forms at `http://localhost:3000/organisations/new`. (Which makes it easier to add the "belongsTo" relationship.)
 
-### update a school
+### update a Organisation
 ```bash
-curl -X PUT http://localhost:3000/schools/{school_id} \
+curl -X PUT http://localhost:3000/organisations/{organisation_id} \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "Bijgewerkte School Naam",
+  "name": "Bijgewerkte Organisation Naam",
   "email": "updated@example.com",
   "belongsTo": "new-board-or-umbrella-uuid"
 }'
 ```
 
-### get all schools
+### get all organisations
 ```bash
-curl http://localhost:3000/schools
+curl http://localhost:3000/organisations
 ```
 
-### get schools by type
+### get organisations by type
 ```bash
-curl http://localhost:3000/schools?type=board
+curl http://localhost:3000/organisations?type=board
 ```
 
-### get a school by ID
+### get an organisation by ID
 ```bash
-curl http://localhost:3000/schools/{school_id}
+curl http://localhost:3000/organisations/{organisation_id}
 ```
 
-### delete a school by ID
+### delete an organisation by ID
 ```bash
-curl -X DELETE http://localhost:3000/schools/{school_id}
+curl -X DELETE http://localhost:3000/organisations/{organisation_id}
 ```
 
 ### get all courses

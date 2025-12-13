@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const schoolSchema = new mongoose.Schema({
+const organisationSchema = new mongoose.Schema({
     _id: {
         // _id needs to be a String to store UUIDs
         type: String
@@ -22,8 +22,8 @@ const schoolSchema = new mongoose.Schema({
     // },
     belongsTo: {
         type: String,
-        // note: this field will store the permalink of a document from another School:
-        ref: 'School',
+        // note: this field will store the permalink of a document from another Organisation:
+        ref: 'Organisation',
         default: null
     },
     email: {
@@ -41,6 +41,6 @@ const schoolSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const School = mongoose.model('School', schoolSchema);
+const Organisation = mongoose.model('Organisation', organisationSchema);
 
-module.exports = School;
+module.exports = Organisation;

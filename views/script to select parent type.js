@@ -13,7 +13,7 @@
                 const parentType = schoolType === 'school' ? 'board' : 'umbrella';
                 const labelText = schoolType === 'school' ? 'Geen board' : 'Geen koepel';
                 
-                fetch(`/schools?type=${parentType}`)
+                fetch(`/organisations?type=${parentType}`)
                     .then(response => response.json())
                     .then(parents => {
                         const parentSelect = belongsToField.querySelector('select');

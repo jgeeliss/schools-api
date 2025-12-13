@@ -9,34 +9,34 @@ router.get('/', function(req, res, next) {
 /* GET resources page - show available API routes */
 router.get('/resources', function(req, res, next) {
   const resources = {
-    "schools": {
-      "href": "/schools",
+    "organisations": {
+      "href": "/organisations",
       "description": "Schools, boards, and umbrellas",
       "methods": {
         "GET": {
-          "description": "Get all schools (supports ?type=school|board|umbrella)"
+          "description": "Get all organisations (supports ?type=school|board|umbrella)"
         },
         "POST": {
-          "description": "Create a new school"
+          "description": "Create a new organisation"
         }
       }
     },
-    "schools/new": {
-      "href": "/schools/new",
-      "description": "Form to create a new school"
+    "organisations/new": {
+      "href": "/organisations/new",
+      "description": "Form to create a new organisation"
     },
-    "schools/:uuid": {
-      "href": "/schools/:uuid",
-      "description": "Individual school resource",
+    "organisations/:uuid": {
+      "href": "/organisations/:uuid",
+      "description": "Individual organisation resource",
       "methods": {
         "GET": {
-          "description": "Get a specific school by UUID"
+          "description": "Get a specific organisation by UUID"
         },
         "PUT": {
-          "description": "Update a school by UUID"
+          "description": "Update an organisation by UUID"
         },
         "DELETE": {
-          "description": "Delete a school by UUID"
+          "description": "Delete an organisation by UUID"
         }
       }
     },

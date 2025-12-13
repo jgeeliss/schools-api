@@ -21,8 +21,8 @@ block content
             label(for='belongsTo' style='display: inline-block; width: 120px;') School:
             select(name='belongsTo')
                 option(value='' style='font-family: monospace;') Geen school
-                each school in schools
-                    option(value=school._id style='font-family: monospace;')= school._id + ' - ' + school.name
+                each organisation in organisations
+                    option(value=organisation._id style='font-family: monospace;')= organisation._id + ' - ' + organisation.name
 
         div
             label(for='subject' style='display: inline-block; width: 120px;') Onderwerp:

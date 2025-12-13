@@ -3,7 +3,7 @@ extends layout
 block content
     h1 Maak een nieuwe school aan
 
-    form(method='POST' action='/schools')
+    form(method='POST' action='/organisations')
         div
             label(for='name' style='display: inline-block; width: 120px;') School naam:
             input(type='text' name='name', required)
@@ -31,10 +31,10 @@ block content
         button(type='submit') Maak School aan
 
     script.
-        // Pass schools data from server to JavaScript
+        // Pass organisations data from server to JavaScript
         // note: !{JSON.stringify(xxx)} is Jade unescaped interpolation syntax to convert a JavaScript object into a JSON string
         // source: https://stackoverflow.com/questions/8698534/how-to-pass-variable-from-jade-template-file-to-a-script-file
-        const allBoardsAndUmbrellas = !{JSON.stringify(schools)};
+        const allBoardsAndUmbrellas = !{JSON.stringify(organisations)};
 
         const schoolTypeSelect = document.getElementById('schoolType');
         const belongsToInput = document.getElementById('belongsToInput');
@@ -55,13 +55,13 @@ block content
             // Determine which parent type to show
             const parentType = selectedType === 'school' ? 'board' : 'umbrella';
 
-            // Filter schools by parent type
-            const filteredBoardsAndUmbrellas = allBoardsAndUmbrellas.filter(school => school.type === parentType);
+            // Filter organisations by parent type
+            const filteredBoardsAndUmbrellas = allBoardsAndUmbrellas.filter(organisation => organisation.type === parentType);
 
             // Populate the dropdown
             // reset options by setting innerHTML otherwise the list keeps growing on each change!
             belongsToSelect.innerHTML = '<option value="">Geen parent</option>';
-            // create an option element for each filtered school
+            // create an option element for each filtered organisation
             filteredBoardsAndUmbrellas.forEach(parent => {
                 const option = document.createElement('option');
                 option.value = parent._id;
