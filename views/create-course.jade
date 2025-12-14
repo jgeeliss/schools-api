@@ -20,6 +20,7 @@ block content
         div
             label(for='school' style='display: inline-block; width: 120px;') School:
             select(name='school' required)
+                option(value='' style='font-family: monospace;')= 'geen school'
                 each school in schools
                     option(value=school._id style='font-family: monospace;')= school._id + ' - ' + school.name
 
