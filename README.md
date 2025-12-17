@@ -51,6 +51,22 @@ curl http://localhost:3000/organisations
 curl http://localhost:3000/organisations?type=board
 ```
 
+### get organisations with pagination
+Use `limit` and `offset` query parameters to paginate results:
+```bash
+# Get first 10 organisations
+curl http://localhost:3000/organisations?limit=10
+
+# Get next 10 organisations (skip first 10)
+curl http://localhost:3000/organisations?limit=10&offset=10
+
+# Get 5 organisations of type 'school'
+curl http://localhost:3000/organisations?type=school&limit=5
+
+# Skip first 20 and get next 10
+curl http://localhost:3000/organisations?limit=10&offset=20
+```
+
 ### get an organisation by ID
 ```bash
 curl http://localhost:3000/organisations/{organisation_id}
