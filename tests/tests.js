@@ -349,7 +349,7 @@ describe('School Validation Tests', function () {
                     .get('/organisations?invalid=param')
                     .expect(400);
 
-                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
+                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type", "limit", and "offset" are allowed.');
             });
 
             it('should reject multiple query parameters', async function () {
@@ -357,7 +357,7 @@ describe('School Validation Tests', function () {
                     .get('/organisations?type=school&name=test')
                     .expect(400);
 
-                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type" is allowed.');
+                assert.strictEqual(response.body.message, 'Invalid query parameters. Only "type", "limit", and "offset" are allowed.');
             });
         });
 
