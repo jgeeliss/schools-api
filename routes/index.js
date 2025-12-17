@@ -14,7 +14,7 @@ router.get('/resources', function(req, res, next) {
       "description": "Schools, boards, and umbrellas",
       "methods": {
         "GET": {
-          "description": "Get all organisations (supports ?type=school|board|umbrella)"
+          "description": "Get all organisations (supports ?type=school|board|umbrella&limit=N&offset=N)"
         },
         "POST": {
           "description": "Create a new organisation"
