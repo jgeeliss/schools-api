@@ -712,6 +712,21 @@ describe('Course Validation Tests', function () {
 
                 assert.strictEqual(response.body.message, 'Parent school not found');
             });
+
+            it('should reject teacher name with numbers', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Invalid Teacher',
+                        subject: 'Wiskunde',
+                        year: 1,
+                        teacher: 'Jan 22 Jansen',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Teacher name cannot contain numbers');
+            });
         });
 
         describe('GET /courses', function () {
