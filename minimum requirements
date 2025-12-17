@@ -1,0 +1,42 @@
+Functionele minimum requirements
+
+Zoals de naam het zegt zijn de volgende features het strikte minimum waar je project aan moet voldoen om een voldoende te behalen.
+
+Je zorgt voor een data driven API met de volgende features:
+
+    Twee CRUD interfaces, dus de mogelijkheid om voor twee entiteiten (user, newspost, categorie, ...):
+        Een lijst van alle huidige entiteiten ophalen OK
+        De details een entiteit weergeven OK
+        Een nieuwe instantie van de entiteit toevoegen aan de database OK
+        Een bestaande instantie van de entiteit updaten OK
+        Een bestaande instantie van de entiteit verwijderen OK
+    Basisvalidatie
+        Standaard mogen velden niet leeg zijn
+        Numerieke velden kunnen geen strings aanvaarden
+        Een voornaam kan geen cijfers bevatten TODO
+        ... 
+    Minstens één endpoint waar entiteiten teruggegeven worden met een limit en een offset TODO
+    Minstens één endpoint waar entiteiten teruggegeven worden na het zoeken op een waarde van minstens één veld OK
+    Een pagina die zichtbaar is op de root van je project die alle endpoints beschrijft (bvb https://www.twilio.com/docs/usage/api/address). Hier verwacht ik geen styling voor, maar wel een correct opgebouwde HTML-pagina OK
+
+
+Technische requirements
+
+Naast de functionele requirements zijn er ook enkele technische standaarden die je moet volgen:
+
+    We gebruiken Node.js (versie 20 of later) OK
+    We gebruiken Express OK
+
+Er is een database gekoppeld aan dit project, dit mag een alleenstaande database zijn of dezelfde database van het Laravel project
+De juiste HTTP-verbs worden gebruikt (GET, POST, ...)
+
+ 
+Extra features
+
+Het perfect uitvoeren van de functionele minimumvereisten zonder meer zal een resultaat tussen de 10 en 12 op 20 opleveren. Indien je streeft naar een beter resultaat kan dat door extra features aan je project toe te voegen. Enkele voorbeelden van mogelijke features die je zou kunnen toevoegen:
+
+    Geavanceerde validatie die verder gaat dan blanco velden opsporen, getallen valideren, ... Denk aan bijvoorbeeld een "end_date" moet na een "start_date" vallen, een telefoonnummer moet volgens het formaat '+32 444 44 44 44' zijn, ...
+    Zoeken op meer dan één veld
+    Resultaten sorteren
+    Resultaten beperken tot geauthenticeerde gebruikers
+    ...
