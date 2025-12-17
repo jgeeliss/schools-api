@@ -2,6 +2,12 @@
 
 A simple RESTful API for managing schools, school boards, and umbrella organizations and courses using Node.js, Express, and MongoDB.
 
+## Installation
+1. npm install
+2. Set up a MongoDB database (local or cloud)
+3. Create a ./config/config.js file based on ./config/config.example.js and fill in your MongoDB connection string
+4. npm start
+
 ## Features
 - Create, read, update, and delete organisations & courses
 - Support for schools, school boards and umbrella organizations
