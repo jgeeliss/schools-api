@@ -65,12 +65,21 @@ function validateYearIsValid(year) {
   return validYears.includes(year);
 }
 
+function validateTeacherName(teacher) {
+  // Check if teacher name contains any numbers
+  const regex = /\d/;
+  return teacher && !regex.test(teacher);
+}
+
 async function validateCourseData(courseData) {
   if (courseData.school && !await validateSchoolExists(courseData.school)) {
     return { message: 'Parent school not found' };
   }
   if (courseData.year != null && !validateYearIsValid(Number(courseData.year))) {
     return { message: 'Invalid year' };
+  }
+  if (courseData.teacher && !validateTeacherName(courseData.teacher)) {
+    return { message: 'Teacher name cannot contain numbers' };
   }
   return null; // Return null when validation passes
 }
