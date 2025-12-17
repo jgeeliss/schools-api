@@ -24,10 +24,15 @@ router.get('/', async function(req, res, next) {
   try {
     const query = {};
 
-    // only allow 'type' as query parameter
+    // only allow 'type', 'limit', and 'offset' as query parameters
     const queryKeys = Object.keys(req.query);
-    if (queryKeys.length > 0 && (queryKeys.length > 1 || queryKeys[0] !== 'type')) {
-      return res.status(400).json({ message: 'Invalid query parameters. Only "type" is allowed.' });
+    const allowedParams = ['type', 'limit', 'offset'];
+    const invalidParams = queryKeys.filter(key => !allowedParams.includes(key));
+    
+    if (invalidParams.length > 0) {
+      return res.status(400).json({ 
+        message: `Invalid query parameters. Only "type", "limit", and "offset" are allowed.` 
+      });
     }
 
     // note: filter by type if provided in query string
@@ -35,7 +40,24 @@ router.get('/', async function(req, res, next) {
       query.type = req.query.type;
     }
 
-    const organisations = await Organisation.find(query);
+    // Parse limit and offset with defaults
+    const limit = parseInt(req.query.limit) || 0; // 0 means no limit
+    const offset = parseInt(req.query.offset) || 0;
+
+    // Validate limit and offset are non-negative
+    if (limit < 0 || offset < 0) {
+      return res.status(400).json({ 
+        message: 'Limit and offset must be non-negative numbers.' 
+      });
+    }
+
+    let organisationsQuery = Organisation.find(query).skip(offset);
+    
+    if (limit > 0) {
+      organisationsQuery = organisationsQuery.limit(limit);
+    }
+
+    const organisations = await organisationsQuery;
     res.json(organisations);
   } catch (error) {
     next(error);
