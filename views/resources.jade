@@ -1,0 +1,80 @@
+extends layout
+
+block content
+  h1 Schools API Resources
+  p Welcome to the Schools API. Below are the available endpoints:
+
+    h2 organisations
+    p Schools, boards, and umbrellas
+    p
+      strong Endpoint: 
+      a(href="/organisations") /organisations
+    h3 Available Methods
+      h4 GET
+      p Get all organisations
+      h5 Query Parameters:
+      ul
+        li
+          strong type: 
+          | Filter by organisation type (school, board, or umbrella)
+        li
+          strong limit: 
+          | Limit the number of organisations returned
+        li
+          strong offset: 
+          | Offset for pagination
+      h4 POST
+      p Create a new organisation
+    hr
+
+    h2 organisations/new
+    p Form to create a new organisation
+    p
+      strong Endpoint: 
+      a(href="/organisations/new") /organisations/new
+    hr
+
+    h2 organisations/:uuid
+    p Individual organisation resource
+    p
+      strong Endpoint: 
+      | /organisations/:uuid
+    h3 Available Methods
+      h4 GET
+      p Get a specific organisation by UUID
+      h4 PUT
+      p Update an organisation by UUID
+      h4 DELETE
+      p Delete an organisation by UUID
+    hr
+
+    h2 courses
+    p Courses
+    p
+      strong Endpoint: 
+      a(href="/courses") /courses
+    h3 Available Methods
+      h4 GET
+      p Get all courses
+      h5 Query Parameters:
+      ul
+        li
+          strong year: 
+          | Filter courses by year (integer)
+      h4 POST
+      p Create a new course
+    hr
+
+    h2 courses/:uuid
+    p Individual course resource
+    p
+      strong Endpoint: 
+      | /courses/:uuid
+    h3 Available Methods
+      h4 GET
+      p Get a specific course by UUID
+      h4 PUT
+      p Update a course by UUID
+      h4 DELETE
+      p Delete a course by UUID
+    hr
