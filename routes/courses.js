@@ -31,8 +31,12 @@ router.get('/', async function (req, res, next) {
     }
 
     // note: filter by year if provided in query string
-    if (req.query.year) {
-      query.year = req.query.year;
+    if (req.query.year !== undefined) {
+      const yearValue = Number(req.query.year);
+      if (isNaN(yearValue) || !Number.isInteger(yearValue) || req.query.year === '') {
+        return res.status(400).json({ message: 'Year must be a valid integer' });
+      }
+      query.year = yearValue;
     }
 
     const courses = await Course.find(query);
@@ -75,8 +79,14 @@ async function validateCourseData(courseData) {
   if (courseData.school && !await validateSchoolExists(courseData.school)) {
     return { message: 'Parent school not found' };
   }
-  if (courseData.year != null && !validateYearIsValid(Number(courseData.year))) {
-    return { message: 'Invalid year' };
+  if (courseData.year != null) {
+    const yearValue = Number(courseData.year);
+    if (isNaN(yearValue) || !Number.isInteger(yearValue) || courseData.year === '') {
+      return { message: 'Year must be a valid integer' };
+    }
+    if (!validateYearIsValid(yearValue)) {
+      return { message: 'Invalid year' };
+    }
   }
   if (courseData.teacher && !validateTeacherName(courseData.teacher)) {
     return { message: 'Teacher name cannot contain numbers' };

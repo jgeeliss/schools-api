@@ -17,7 +17,7 @@ Je zorgt voor een data driven API met de volgende features:
         ... 
     Minstens één endpoint waar entiteiten teruggegeven worden met een limit en een offset OK
     Minstens één endpoint waar entiteiten teruggegeven worden na het zoeken op een waarde van minstens één veld OK
-    Een pagina die zichtbaar is op de root van je project die alle endpoints beschrijft (bvb https://www.twilio.com/docs/usage/api/address). Hier verwacht ik geen styling voor, maar wel een correct opgebouwde HTML-pagina OK
+    Een pagina die zichtbaar is op de root van je project die alle endpoints beschrijft (bvb https://www.twilio.com/docs/usage/api/address). Hier verwacht ik geen styling voor, maar wel een correct opgebouwde HTML-pagina TODO
 
 
 Technische requirements

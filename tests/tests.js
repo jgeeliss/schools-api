@@ -727,6 +727,51 @@ describe('Course Validation Tests', function () {
 
                 assert.strictEqual(response.body.message, 'Teacher name cannot contain numbers');
             });
+
+            it('should reject string value for year', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_String Year',
+                        subject: 'Wiskunde',
+                        year: 'string',
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject empty string for year', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Empty Year',
+                        subject: 'Wiskunde',
+                        year: '',
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject decimal value for year', async function () {
+                const response = await request(app)
+                    .post('/courses')
+                    .send({
+                        name: 'API_TEST_COURSE_Decimal Year',
+                        subject: 'Wiskunde',
+                        year: 2.5,
+                        teacher: 'Jan Jansen',
+                        school: testSchool._id
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
         });
 
         describe('GET /courses', function () {
@@ -748,6 +793,30 @@ describe('Course Validation Tests', function () {
                 response.body.forEach(course => {
                     assert.strictEqual(course.year, 1);
                 });
+            });
+
+            it('should reject string value for year parameter', async function () {
+                const response = await request(app)
+                    .get('/courses?year=uk')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject decimal value for year parameter', async function () {
+                const response = await request(app)
+                    .get('/courses?year=2.5')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject empty string for year parameter', async function () {
+                const response = await request(app)
+                    .get('/courses?year=')
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
             });
 
             it('should reject invalid query parameters', async function () {
@@ -822,6 +891,39 @@ describe('Course Validation Tests', function () {
                     .expect(400);
 
                 assert.strictEqual(response.body.message, 'Cannot change course ID');
+            });
+
+            it('should reject string value for year', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        year: 'invalid'
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject empty string for year', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        year: ''
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
+            });
+
+            it('should reject decimal value for year', async function () {
+                const response = await request(app)
+                    .put(`/courses/${testCourse._id}`)
+                    .send({
+                        year: 3.7
+                    })
+                    .expect(400);
+
+                assert.strictEqual(response.body.message, 'Year must be a valid integer');
             });
 
             it('should return 404 for non-existent course', async function () {
