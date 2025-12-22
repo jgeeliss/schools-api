@@ -27,8 +27,7 @@ const organisationSchema = new mongoose.Schema({
         // only required for schools and boards
         required: function() {
             return this.type === 'school' || this.type === 'board';
-        },
-        default: null
+        }
     },
     email: {
         type: String,

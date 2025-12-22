@@ -28,8 +28,7 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'School is required'],
         // note: this field will store the permalink of a document from an Organisation:
-        ref: 'Organisation',
-        default: null
+        ref: 'Organisation'
     }
 }, {
     // note: automatically manages two special date fields in MongoDB: createdAt and updatedAt

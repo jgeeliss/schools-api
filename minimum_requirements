@@ -11,7 +11,7 @@ Je zorgt voor een data driven API met de volgende features:
         Een bestaande instantie van de entiteit updaten OK
         Een bestaande instantie van de entiteit verwijderen OK
     Basisvalidatie
-        Standaard mogen velden niet leeg zijn TODO
+        Standaard mogen velden niet leeg zijn OK
         Numerieke velden kunnen geen strings aanvaarden OK
         Een voornaam kan geen cijfers bevatten OK
         ... 
