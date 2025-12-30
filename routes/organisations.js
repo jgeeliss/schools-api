@@ -160,7 +160,6 @@ router.delete('/:uuid', async function(req, res, next) {
     if (childOrganisations > 0) {
       return res.status(400).json({
         message: 'Cannot delete organisation with child organisations. Please delete or reassign child organisations first.',
-        // TODO: need to be add an update route for organisations!
         // inform how many child organisations exist:
         numberOfChildOrganisations: childOrganisations
       });
@@ -171,7 +170,6 @@ router.delete('/:uuid', async function(req, res, next) {
     if (coursesCount > 0) {
       return res.status(400).json({
         message: 'Cannot delete organisation with courses. Please delete or reassign courses first.',
-        // TODO: need to be add an update route for courses too!
         numberOfCourses: coursesCount
       });
     }
