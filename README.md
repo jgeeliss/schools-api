@@ -7,9 +7,7 @@ A simple RESTful API for managing schools, school boards, and umbrella organizat
 2. Set up a MongoDB database (local or cloud)
 3. Create a ./config/config.js file based on ./config/config.example.js and fill in your MongoDB connection string
 4. Optionally, seed the database with initial data:
-   ```bash
     npm run seed
-   ```
 5. npm start
 
 ## Features
@@ -17,6 +15,10 @@ A simple RESTful API for managing schools, school boards, and umbrella organizat
 - Support for schools, school boards and umbrella organizations
 - Validation and error handling
 - UUIDs for unique identification of organisations and courses
+
+## Test suite
+All API endpoints and validation rules are covered by mocha tests. To run the tests, use the following command:
+- npm test
 
 ## Organisations
 ### create an organisation
