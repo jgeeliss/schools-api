@@ -1,11 +1,11 @@
 extends layout
 
 block content
-    h1 Maak een nieuwe school aan
+    h1 Maak een nieuwe organisatie aan
 
     form(method='POST' action='/organisations')
         div
-            label(for='name' style='display: inline-block; width: 120px;') School naam:
+            label(for='name' style='display: inline-block; width: 120px;') Organisatie naam:
             input(type='text' name='name', required)
 
         div
@@ -16,7 +16,7 @@ block content
                 option(value='umbrella') Umbrella
 
         div#belongsToInput(style='display: none;')
-            label(for='belongsTo' style='display: inline-block; width: 120px;') Schoolbestuur:
+            label(for='belongsTo' style='display: inline-block; width: 120px;') Behoort tot:
             select(name='belongsTo', required)
 
         div
@@ -27,7 +27,7 @@ block content
             label(for='telephone' style='display: inline-block; width: 120px;') Telefoon:
             input(type='tel' name='telephone', required)
 
-        button(type='submit') Maak School aan
+        button(type='submit') Maak Organisatie aan
 
     script.
         // Pass organisations data from server to JavaScript
