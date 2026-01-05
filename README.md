@@ -132,3 +132,9 @@ curl http://localhost:3000/courses/{course_id}
 ```bash
 curl -X DELETE http://localhost:3000/courses/{course_id}
 ```
+
+## Sources
+- [How to disable morgan request logger during unit test - Stack Overflow](https://stackoverflow.com/questions/60129677/how-to-disable-morgan-request-logger-during-unit-test)
+- [Writing test with Supertest and Mocha for ExpressJS routes - Medium](https://medium.com/@ehtemam/writing-test-with-supertest-and-mocha-for-expressjs-routes-555d2910d2c2)
+- [How to pass variable from Jade template file to a script file - Stack Overflow](https://stackoverflow.com/questions/8698534/how-to-pass-variable-from-jade-template-file-to-a-script-file)
+- [The Mongoose $in Operator - ObjectRocket](https://kb.objectrocket.com/mongo-db/the-mongoose-in-operator-1015)
